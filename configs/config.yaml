@@ -1,11 +1,10 @@
-# 1 = fake, 0 = real
 
-
+# Labels: 1 = fake, 0 = real
 data:
   isot_true: data/sample/isot_true_sample.csv
   isot_fake: data/sample/isot_fake_sample.csv
-  liar:      data/sample/liar_sample.tsv
-
+  liar:
+    - data/sample/liar_sample.tsv
   liar_label_map:
     "pants-fire": 1
     "false": 1
@@ -15,24 +14,23 @@ data:
     "true": 0
 
 
-
+# ---------- Independent variables
 experiment:
   text_versions: [raw, clean]
-  seeds: [13, 21, 42, 87, 123]
+  seeds: [13, 21, 42, 87, 123, 7, 99, 256, 314, 777]
   test_size: 0.2
-  top_n: 20
+  top_n: [100, 500, 1000]
 
-
-
+# ---------- Controlled variables
 model:
   ngram_range: [1, 2]
   min_df: 1
   max_features: 50000
   C: 1.0
+  solver: lbfgs
   max_iter: 1000
 
-
-
+# Rules for source-specific features
 cleaning:
   patterns:
     - '\(Reuters\)\s*-'
@@ -46,11 +44,10 @@ cleaning:
     - '\b(reuters|getty images|21st century wire)\b'
   source_words: [reuters, getty, featured, image, screenshot, via, video, twitter, http, www, wire, 21st]
 
-
-
+# ---------- Limits / guardrails ----------
 limits:
   timeout_seconds: 600
-  min_isot_f1: 0.80
-
+  max_isot_f1_drop: 0.02
+  
 output:
   results_dir: results
