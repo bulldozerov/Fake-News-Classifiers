@@ -1,0 +1,56 @@
+# 1 = fake, 0 = real
+
+
+data:
+  isot_true: data/sample/isot_true_sample.csv
+  isot_fake: data/sample/isot_fake_sample.csv
+  liar:      data/sample/liar_sample.tsv
+
+  liar_label_map:
+    "pants-fire": 1
+    "false": 1
+    "barely-true": 1
+    "half-true": 0
+    "mostly-true": 0
+    "true": 0
+
+
+
+experiment:
+  text_versions: [raw, clean]
+  seeds: [13, 21, 42, 87, 123]
+  test_size: 0.2
+  top_n: 20
+
+
+
+model:
+  ngram_range: [1, 2]
+  min_df: 1
+  max_features: 50000
+  C: 1.0
+  max_iter: 1000
+
+
+
+cleaning:
+  patterns:
+    - '\(Reuters\)\s*-'
+    - 'https?://\S+'
+    - 'www\.\S+'
+    - 'pic\.twitter\.com/\S+'
+    - '@\w+'
+    - 'featured image via[^.]*'
+    - '(image|photo|screenshot) via[^.]*'
+    - '[\[(](video|audio|image)[\])]'
+    - '\b(reuters|getty images|21st century wire)\b'
+  source_words: [reuters, getty, featured, image, screenshot, via, video, twitter, http, www, wire, 21st]
+
+
+
+limits:
+  timeout_seconds: 600
+  min_isot_f1: 0.80
+
+output:
+  results_dir: results

@@ -1,33 +1,18 @@
-# Python
 __pycache__/
 *.pyc
-
-# Virtual environments
 .venv/
 venv/
 env/
-
-# Jupyter
 .ipynb_checkpoints/
-
-# Logs and experiment results
 *.log
 results/
-
-# Full datasets (only data/sample/ is committed)
 data/raw/
 *.zip
-
-# Model weights / binary files
 *.pkl
 *.joblib
 *.npy
-
-# Secrets
 .env
 kaggle.json
-
-# OS / editor files
 .DS_Store
 Thumbs.db
 .idea/

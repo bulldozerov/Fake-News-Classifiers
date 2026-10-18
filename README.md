@@ -43,7 +43,7 @@ fake-news-shortcut-audit/
 | B2 | RQ2        | ISOT train (raw text)             | –                  | feature rank by weight (top-20) | share of source-specific features |
 | B3 | RQ3        | ISOT train (raw vs. clean text)   | LIAR               | text version                    | F1, accuracy                      |
 
-Each benchmark is repeated with 5 random seeds (13, 21, 42, 87, 123).
+Benchmarks are repeated with 5 random seeds (13, 21, 42, 87, 123).
 
 ## Quickstart
 
