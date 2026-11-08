@@ -189,7 +189,6 @@ def main():
             record.update(guardrail)
         records.extend(seed_records)
 
-    # save raw results: one JSON line = one record
     os.makedirs(os.path.dirname(raw_file), exist_ok=True)
     with open(raw_file, "w", encoding="utf-8") as f:
         for record in records:
