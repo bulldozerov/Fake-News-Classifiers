@@ -1,10 +1,12 @@
 
 # Labels: 1 = fake, 0 = real
 data:
-  isot_true: data/sample/isot_true_sample.csv
-  isot_fake: data/sample/isot_fake_sample.csv
+  isot_true: data/isot/True.csv
+  isot_fake: data/isot/Fake.csv
   liar:
-    - data/sample/liar_sample.tsv
+    - data/liar/train.tsv
+    - data/liar/valid.tsv
+    - data/liar/test.tsv
   liar_label_map:
     "pants-fire": 1
     "false": 1

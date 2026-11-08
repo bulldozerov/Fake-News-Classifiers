@@ -7,8 +7,11 @@ env/
 *.log
 results/
 
+# Files are big, so git would ignore them
+data/isot/
+data/liar/ 
 
-data/raw/
+
 *.zip
 *.pkl
 *.joblib
