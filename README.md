@@ -20,33 +20,31 @@ Which text features cause performance degradation of fake news classifiers on un
 
 ## Repository Structure
 
-```
 Fake-News-Classifiers/
 ├── configs/
-│   └── config.yaml              # all parameters
+│   └── config.yaml              # all parameters
 ├── data/
-│   ├── sample/                  # sample
-│   ├── raw/
-│   │   └── test_run.jsonl       # raw results of every run
-│   └── processed/
-│       ├── metrics_summary.csv  # mean, SD, median, p95, p99, bootstrap 95% CI
-│       └── hypothesis_tests.csv # tests for H1, H2, H3 and guardrails
+│   ├── sample/                  # sample
+│   ├── raw/
+│   │   └── test_run.jsonl       # raw results of every run
+│   └── processed/
+│       ├── metrics_summary.csv  # mean, SD, median, p95, p99, bootstrap 95% CI
+│       └── hypothesis_tests.csv # tests for H1, H2, H3 and guardrails
 ├── docs/
-│   └── domain_model.md          # loss function, metrics, notation table (LaTeX)
+│   └── domain_model.md          # loss function, metrics, notation table (LaTeX)
 ├── notebooks/
-│   └── 01_data_analysis.ipynb   # data analysis with all outputs
+│   └── 01_data_analysis.ipynb   # data analysis with all outputs
 ├── reports/
-│   └── figures/                 # figures in .pdf and .png (300 DPI)
+│   └── figures/                 # figures in .pdf and .png (300 DPI)
 ├── src/
-│   ├── main.py                  # runs the experiment, writes data/raw/test_run.jsonl
-│   ├── process_data.py          # filtering, statistics, hypothesis tests
-│   └── visualize.py             # figures
+│   ├── main.py                  # runs the experiment, writes data/raw/test_run.jsonl
+│   ├── process_data.py          # filtering, statistics, hypothesis tests
+│   └── visualize.py             # figures
 ├── Dockerfile
 ├── requirements.txt
 ├── .gitignore
 ├── LICENSE
 └── README.md
-```
 
 ## Planned Benchmarks
 
@@ -59,9 +57,7 @@ Fake-News-Classifiers/
 
 Each benchmark is repeated with 10 random seeds.
 
-## Results
-
-Baseline is the model trained on the original (raw) text, Proposed is the model trained on text cleaned of source-specific patterns. Values are Mean ± SD over 10 seeds.
+## Results & Discussion
 
 **Baseline** is the model trained on the original (raw) text, **Proposed** is the model trained on text
 cleaned of source-specific patterns. Values are Mean ± SD over 10 seeds.
@@ -85,18 +81,17 @@ Share of source-specific features among the top-N features by absolute weight (m
 | 1000 | 4.76% | 1.08% |
 | Whole vocabulary | 0.73% | 0.23% |
 
-![Share of source-specific features](reports/figures/fig1_source_share_vs_topn.png)
+![Share of source-specific features](reports/figures/fig1_source_shares.png)
 
-![Macro-F1 distribution over 10 seeds](reports/figures/fig2_distribution_boxplot.png)
-
-- The model works almost perfectly on ISOT (F1 about 0.99) and close to chance on LIAR. Its accuracy on LIAR (0.475)
-  is even lower than the accuracy of always predicting the most frequent class (0.558).
+![Macro-F1 distribution over 10 seeds](reports/figures/fig2_distribution_boxplot.png) - The model works almost perfectly on ISOT (F1 about 0.99) and close to chance on LIAR. Its accuracy on LIAR (0.475)
+  is even lower than the accuracy of always predicting the most frequent class (0.558).
 - The model does rely on source clues: 15% of its 100 most important features are source-specific, while they are
-  only 0.73% of the vocabulary. Cleaning reduces this share to 2%.
+  only 0.73% of the vocabulary. Cleaning reduces this share to 2%.
 - However, removing these clues does not improve the results on LIAR. So the drop is not explained only by the
-  source-specific words we removed. A likely reason is in deeper reasons: ISOT consists of long news articles,
-  LIAR of short political claims, and the labels have a different meaning
+  source-specific words we removed. A likely reason is deeper: ISOT consists of long news articles,
+  LIAR of short political claims, and the labels have a different meaning
 
+Definition of the loss function, target metrics, hypothesis tests and the notation table are in [docs/domain_model.md](docs/domain_model.md).
 
 
 ### Hypotheses
@@ -112,26 +107,30 @@ Share of source-specific features among the top-N features by absolute weight (m
 
 ## Quickstart
 
-```bash
-git clone https://github.com/bulldozerov/Fake-News-Classifiers.git && cd Fake-News-Classifiers
-docker build -t fake-news-benchmark .
-docker run --rm -v "$(pwd)/results:/app/results" fake-news-benchmark
-```
+- Install the libraries:
+   ```bash
+   pip install -r requirements.txt
+   ```
+- Download datasets (they are not stored in this repository) and put them here:
+   - ISOT (`True.csv`, `Fake.csv`) into `data/isot/`
+   - LIAR (`train.tsv`, `valid.tsv`, `test.tsv`) into `data/liar/`
+- Run:
+   ```bash
+   python src/main.py
+   python src/process_data.py
+   python src/visualize.py
+   ```
+- Open `01_data_analysis.ipynb` and make **Restart → Run All**.
 
-Download the datasets (they are not stored in the repository because of their size) and put them here:
-   - ISOT (`True.csv`, `Fake.csv`) into `data/isot/`
-   - LIAR (`train.tsv`, `valid.tsv`, `test.tsv`) into `data/liar/`
-
-Open `notebooks/01_data_analysis.ipynb` and choose **Restart → Run All**.
 
 ## Data
 
 - **ISOT Fake News Dataset**
-  <https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset>
+  <https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset>
 - **LIAR**
-  <https://www.kaggle.com/datasets/doanquanvietnamca/liar-dataset>
+  <https://www.kaggle.com/datasets/doanquanvietnamca/liar-dataset>
 
 
 ## License
 
-MIT
+MIT   
