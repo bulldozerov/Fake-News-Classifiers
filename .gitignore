@@ -7,9 +7,6 @@ env/
 *.log
 results/
 
-# Now they're not nessesary, and their weight is a problem. They will be used later
-data/isot/
-data/liar/ 
 
 data/raw/
 *.zip
