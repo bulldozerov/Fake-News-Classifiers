@@ -23,15 +23,24 @@ Which text features cause performance degradation of fake news classifiers on un
 ```
 Fake-News-Classifiers/
 ├── configs/
-│   └── config.yaml
+│   └── config.yaml              # all parameters
 ├── data/
-│   └── sample/
-│       ├── isot_true_sample.csv
-│       ├── isot_fake_sample.csv
-│       └── liar_sample.tsv
+│   ├── sample/                  # sample
+│   ├── raw/
+│   │   └── test_run.jsonl       # raw results of every run
+│   └── processed/
+│       ├── metrics_summary.csv  # mean, SD, median, p95, p99, bootstrap 95% CI
+│       └── hypothesis_tests.csv # tests for H1, H2, H3 and guardrails
+├── docs/
+│   └── domain_model.md          # loss function, metrics, notation table (LaTeX)
 ├── notebooks/
+│   └── 01_data_analysis.ipynb   # data analysis with all outputs
+├── reports/
+│   └── figures/                 # figures in .pdf and .png (300 DPI)
 ├── src/
-│   └── main.py
+│   ├── main.py                  # runs the experiment, writes data/raw/test_run.jsonl
+│   ├── process_data.py          # filtering, statistics, hypothesis tests
+│   └── visualize.py             # figures
 ├── Dockerfile
 ├── requirements.txt
 ├── .gitignore
@@ -50,6 +59,57 @@ Fake-News-Classifiers/
 
 Each benchmark is repeated with 10 random seeds.
 
+## Results
+
+Baseline is the model trained on the original (raw) text, Proposed is the model trained on text cleaned of source-specific patterns. Values are Mean ± SD over 10 seeds.
+
+**Baseline** is the model trained on the original (raw) text, **Proposed** is the model trained on text
+cleaned of source-specific patterns. Values are Mean ± SD over 10 seeds.
+
+| Metric | Test set | Baseline (raw text) | Proposed (cleaned text) | Majority class |
+|--------|----------|---------------------|-------------------------|----------------|
+| F1 | ISOT test | 0.9877 ± 0.0012 | 0.9840 ± 0.0014 | – |
+| F1 | LIAR | 0.4376 ± 0.0035 | 0.4379 ± 0.0050 | 0.3583 |
+| Accuracy | ISOT test | 0.9878 ± 0.0012 | 0.9841 ± 0.0014 | – |
+| Accuracy | LIAR | 0.4755 ± 0.0017 | 0.4750 ± 0.0022 | 0.5584 |
+
+Median (p25–p75) of F1 on LIAR: raw 0.4370 (0.4351–0.4393), cleaned 0.4365 (0.4343–0.4416).
+All 95% confidence intervals are bootstrap intervals (10 000 resamples, fixed seed 42)
+
+Share of source-specific features among the top-N features by absolute weight (mean over 10 seeds):
+
+| Top-N | Raw text | Cleaned text |
+|-------|----------|--------------|
+| 100 | 15.0% | 2.0% |
+| 500 | 5.56% | 1.58% |
+| 1000 | 4.76% | 1.08% |
+| Whole vocabulary | 0.73% | 0.23% |
+
+![Share of source-specific features](reports/figures/fig1_source_share_vs_topn.png)
+
+![Macro-F1 distribution over 10 seeds](reports/figures/fig2_distribution_boxplot.png)
+
+- The model works almost perfectly on ISOT (F1 about 0.99) and close to chance on LIAR. Its accuracy on LIAR (0.475)
+  is even lower than the accuracy of always predicting the most frequent class (0.558).
+- The model does rely on source clues: 15% of its 100 most important features are source-specific, while they are
+  only 0.73% of the vocabulary. Cleaning reduces this share to 2%.
+- However, removing these clues does not improve the results on LIAR. So the drop is not explained only by the
+  source-specific words we removed. A likely reason is in deeper reasons: ISOT consists of long news articles,
+  LIAR of short political claims, and the labels have a different meaning
+
+
+
+### Hypotheses
+
+| Hypothesis | Result | Evidence |
+|------------|--------|----------|
+| H1: drop on unseen data | **supported** | F1 drops by 0.550 (95% CI 0.548–0.552), accuracy by 0.512; paired one-sided t-test p < 1e-21 |
+| H2: reliance on source-specific features | **supported** | the share in top-100 is 15% vs. 0.73% in the vocabulary; binomial test, worst p-value over seeds < 0.03 for all N and both text versions |
+| H3: cleaning helps on LIAR | **not supported** | change of F1 +0.0004, 95% CI from −0.0032 to +0.0037 includes 0; gain in 6 of 10 seeds |
+| Guardrails | passed | F1 on ISOT falls by at most 0.0053 after cleaning (limit 0.02); no texts in both train and test |
+
+
+
 ## Quickstart
 
 ```bash
@@ -58,15 +118,11 @@ docker build -t fake-news-benchmark .
 docker run --rm -v "$(pwd)/results:/app/results" fake-news-benchmark
 ```
 
-The test run uses `data/sample/` and writes `results/run_<time>.log` and
-`results/metrics_<time>.csv`.
+Download the datasets (they are not stored in the repository because of their size) and put them here:
+   - ISOT (`True.csv`, `Fake.csv`) into `data/isot/`
+   - LIAR (`train.tsv`, `valid.tsv`, `test.tsv`) into `data/liar/`
 
-Without Docker:
-
-```bash
-pip install -r requirements.txt
-python src/main.py --config configs/config.yaml
-```
+Open `notebooks/01_data_analysis.ipynb` and choose **Restart → Run All**.
 
 ## Data
 
