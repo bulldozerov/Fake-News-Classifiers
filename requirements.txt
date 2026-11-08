@@ -8,3 +8,5 @@ joblib==1.6.0
 threadpoolctl==3.7.0
 narwhals==2.26.0
 PyYAML==6.0.3
+seaborn==0.13.2
+matplotlib==3.10.1
