@@ -1,0 +1,12 @@
+hypothesis,what,estimate,ci95_low,ci95_high,p_value,supported,note
+H1,f1: ISOT minus LIAR (raw),0.5501359141746074,0.5484251129923832,0.5518128548099096,2.2976933315159603e-22,True,
+H1,accuracy: ISOT minus LIAR (raw),0.5123062687415911,0.5115719776409596,0.5130626720757919,2.9049541537586434e-25,True,
+H2,raw: share in top-100,0.14999999999999997,,,1.4741924788464786e-15,True,vocabulary share = 0.0073
+H2,raw: share in top-500,0.055600000000000004,,,1.5737066099784277e-14,True,vocabulary share = 0.0073
+H2,raw: share in top-1000,0.047599999999999996,,,2.8747506787337048e-21,True,vocabulary share = 0.0073
+H2,clean: share in top-100,0.019999999999999997,,,0.025164490117477283,True,vocabulary share = 0.0023
+H2,clean: share in top-500,0.0158,,,0.00019908653422745533,True,vocabulary share = 0.0023
+H2,clean: share in top-1000,0.010799999999999999,,,0.00016073093920049983,True,vocabulary share = 0.0023
+H3,F1 on LIAR: clean minus raw,0.000359307787105001,-0.0032419796758015283,0.0037018206629585936,,False,seeds with gain > 0: 6 of 10
+Guardrail,F1 on ISOT test: raw minus clean,0.0036855749126221025,0.003168806185381333,0.00420136823542463,,True,"max drop = 0.0053, limit = 0.02"
+Guardrail,texts in both ISOT train and test,0.0,,,,True,
