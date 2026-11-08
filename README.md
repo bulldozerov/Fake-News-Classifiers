@@ -20,6 +20,7 @@ Which text features cause performance degradation of fake news classifiers on un
 
 ## Repository Structure
 
+```
 Fake-News-Classifiers/
 ├── configs/
 │   └── config.yaml              # all parameters
@@ -45,15 +46,18 @@ Fake-News-Classifiers/
 ├── .gitignore
 ├── LICENSE
 └── README.md
+```
 
 ## Planned Benchmarks
 
+```
 | ID | Hypothesis | Train data | Test data | Independent variable | Metrics |
 |----|------------|------------|-----------|----------------------|---------|
 | B0 | – | – | LIAR | – | majority-class baseline: F1, accuracy |
 | B1 | RQ1 | ISOT train (raw text) | ISOT test vs. LIAR | test data source | F1, accuracy |
 | B2 | RQ2 | ISOT train (raw text) | – | feature rank by weight (top-100, 500, 1000) | share of source-specific features in top-N vs. vocabulary |
 | B3 | RQ3 | ISOT train (raw vs. clean text) | ISOT test, LIAR | text version | F1, accuracy |
+```
 
 Each benchmark is repeated with 10 random seeds.
 
@@ -62,28 +66,34 @@ Each benchmark is repeated with 10 random seeds.
 **Baseline** is the model trained on the original (raw) text, **Proposed** is the model trained on text
 cleaned of source-specific patterns. Values are Mean ± SD over 10 seeds.
 
+```
 | Metric | Test set | Baseline (raw text) | Proposed (cleaned text) | Majority class |
 |--------|----------|---------------------|-------------------------|----------------|
 | F1 | ISOT test | 0.9877 ± 0.0012 | 0.9840 ± 0.0014 | – |
 | F1 | LIAR | 0.4376 ± 0.0035 | 0.4379 ± 0.0050 | 0.3583 |
 | Accuracy | ISOT test | 0.9878 ± 0.0012 | 0.9841 ± 0.0014 | – |
 | Accuracy | LIAR | 0.4755 ± 0.0017 | 0.4750 ± 0.0022 | 0.5584 |
+```
 
 Median (p25–p75) of F1 on LIAR: raw 0.4370 (0.4351–0.4393), cleaned 0.4365 (0.4343–0.4416).
 All 95% confidence intervals are bootstrap intervals (10 000 resamples, fixed seed 42)
 
 Share of source-specific features among the top-N features by absolute weight (mean over 10 seeds):
 
+```
 | Top-N | Raw text | Cleaned text |
 |-------|----------|--------------|
 | 100 | 15.0% | 2.0% |
 | 500 | 5.56% | 1.58% |
 | 1000 | 4.76% | 1.08% |
 | Whole vocabulary | 0.73% | 0.23% |
+```
 
-![Share of source-specific features](reports/figures/fig1_source_shares.png)
+![Share of source-specific features](reports/figures/fig1_latency_vs_load.png)
 
-![Macro-F1 distribution over 10 seeds](reports/figures/fig2_distribution_boxplot.png) - The model works almost perfectly on ISOT (F1 about 0.99) and close to chance on LIAR. Its accuracy on LIAR (0.475)
+![Macro-F1 distribution over 10 seeds](reports/figures/fig2_distribution_boxplot.png)
+
+- The model works almost perfectly on ISOT (F1 about 0.99) and close to chance on LIAR. Its accuracy on LIAR (0.475)
   is even lower than the accuracy of always predicting the most frequent class (0.558).
 - The model does rely on source clues: 15% of its 100 most important features are source-specific, while they are
   only 0.73% of the vocabulary. Cleaning reduces this share to 2%.
@@ -96,13 +106,14 @@ Definition of the loss function, target metrics, hypothesis tests and the notati
 
 ### Hypotheses
 
+```
 | Hypothesis | Result | Evidence |
 |------------|--------|----------|
 | H1: drop on unseen data | **supported** | F1 drops by 0.550 (95% CI 0.548–0.552), accuracy by 0.512; paired one-sided t-test p < 1e-21 |
 | H2: reliance on source-specific features | **supported** | the share in top-100 is 15% vs. 0.73% in the vocabulary; binomial test, worst p-value over seeds < 0.03 for all N and both text versions |
 | H3: cleaning helps on LIAR | **not supported** | change of F1 +0.0004, 95% CI from −0.0032 to +0.0037 includes 0; gain in 6 of 10 seeds |
 | Guardrails | passed | F1 on ISOT falls by at most 0.0053 after cleaning (limit 0.02); no texts in both train and test |
-
+```
 
 
 ## Quickstart
@@ -120,7 +131,7 @@ Definition of the loss function, target metrics, hypothesis tests and the notati
    python src/process_data.py
    python src/visualize.py
    ```
-- Open `01_data_analysis.ipynb` and make **Restart → Run All**.
+- Open `notebooks/01_data_analysis.ipynb` and make **Restart → Run All**.
 
 
 ## Data
